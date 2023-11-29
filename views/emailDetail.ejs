@@ -1,0 +1,22 @@
+
+<style>
+    .emailDetail{
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+<div class="container">
+    <main class="emailDetail">
+
+        <h2>Subject: <%= email.subject %></h2>
+        <p>From: <%= email.senderName %></p>
+        <p>To: <%= email.recipientName %></p>
+        <p>Body: <%= email.body %></p>
+        <p>Time Sent: <%= email.timeSent %></p>
+
+        <% if (email.attachment) { %>
+          <a href="/download/<%= email.id %>">Download Attachment</a>
+        <% } %>
+    </main>
+</div>

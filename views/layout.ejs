@@ -1,0 +1,70 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Email App</title>
+    <style>
+        a{
+            text-decoration: none; 
+            color: #333; 
+            cursor: pointer; 
+        }
+        ul{
+            list-style: none;
+        }
+    </style>
+</head>
+<body>
+    <% if (typeof signedInUser !== 'undefined') { %>
+    <header>
+            <h1>Welcome, <%= signedInUser.fullname %></h1>
+            <a href="/signout" id="signOutButton">Sign out</a>
+    </header>
+    <div class="container">
+        <nav>
+            <ul>
+                <li><a href="/compose">Compose</a></li>
+                <li><a href="/inbox">Inbox</a></li>
+                <li><a href="/outbox">Outbox</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            
+            <%- body %>
+        </main>
+    </div>
+    
+        <% } else { %>
+            <header>
+                <h1>Welcome to Email Website</h1> 
+                <div class="container">
+            </header>
+            <div class="container">
+                <main>
+            
+                <%- body %>
+            </main>
+        </div>
+        <% } %>
+    
+
+</body>
+<script>
+    document.getElementById('signOutButton').addEventListener('click', () => {
+      fetch('/signout', {
+        method: 'POST',
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          window.location.href = '/signin';
+        }
+      })
+      .catch(error => console.error('Error signing out:', error));
+    });
+  </script>
+</html>

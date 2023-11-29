@@ -1,0 +1,123 @@
+
+<style>
+    #inbox table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    #inbox th, #inbox td {
+        border: 1px solid #dddddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    #inbox th {
+        background-color: #f2f2f2;
+    }
+
+    .pagination{
+        padding: 10px;
+        text-align: center;
+        list-style: none;
+    }
+
+    .pagination li{
+        text-decoration: none;
+        display: inline-block;
+        padding: 20px ;
+        margin: 0 10px;
+    }
+
+    .pagination .active{
+        background-color: red;
+        color: #ffffff;
+    }
+
+    #container{
+        padding:30px;
+        margin: 30px 50px;
+    }
+    
+</style>
+<div id="container">
+<section id="inbox">
+    <h2>Inbox</h2>
+    <table>
+        <thead>
+            <tr>
+                <th><button id="deleteButton">Delete Selected</button></th>
+                <th>Sender</th>
+                <th>Subject</th>
+                <th>Times Received</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (typeof rows !== 'undefined') { %>
+                <% rows.forEach(email => { %>
+                    <tr>
+                        <td> <input type="checkbox" class="emailCheckbox" value="<%= email.id %>"></td>
+                        <td><%= email.senderName %></td>
+                        <td><a href="/email/<%= email.id %>"><%= email.subject %></a></td>
+                        <td><%= email.timeSent %></td>
+                    </tr>
+                <% }); %>
+                <% } %>
+        </tbody>
+    </table>
+    <div class="pagination">
+        <% if (totalPages > 1) { %>
+            <nav aria-label="Page navigation">
+              <ul class="pagination">
+                <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                  <a class="page-link" href="/inbox?page=1&limit=<%= limit %>">&laquo;&laquo;</a>
+                </li>
+                <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                  <a class="page-link" href="/inbox?page=<%= currentPage - 1 %>&limit=<%= limit %>">&laquo;</a>
+                </li>
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                  <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                    <a class="page-link" href="/inbox?page=<%= i %>&limit=<%= limit %>"><%= i %></a>
+                  </li>
+                <% } %>
+                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                  <a class="page-link" href="/inbox?page=<%= currentPage + 1 %>&limit=<%= limit %>">&raquo;</a>
+                </li>
+                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                  <a class="page-link" href="/inbox?page=<%= totalPages %>&limit=<%= limit %>">&raquo;&raquo;</a>
+                </li>
+              </ul>
+            </nav>
+          <% } %>
+    </div>
+    <script>
+      document.getElementById('deleteButton').addEventListener('click', () => {
+        const selectedEmailIds = Array.from(document.getElementsByClassName('emailCheckbox'))
+          .filter(checkbox => checkbox.checked)
+          .map(checkbox => checkbox.value);
+    
+        fetch('/api/delete-emails', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ emailIds: selectedEmailIds }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+
+            selectedEmailIds.forEach(emailId => {
+              const emailElement = document.getElementById(`$emailId`);
+              if (emailElement) {
+                emailElement.remove();
+              }
+            });
+          }
+        })
+        .catch(error => console.error('Error deleting emails:', error));
+      });
+    </script>
+   
+</section>
+</div>

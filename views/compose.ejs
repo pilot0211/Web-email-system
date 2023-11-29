@@ -1,0 +1,45 @@
+
+<style>
+    .compose{
+        display: flex;
+        justify-content: center;
+    }
+</style>
+<div class="compose">
+    <form action="/compose" method="post" enctype="multipart/form-data">
+        <div style="margin-bottom: 20px;">
+            <label for="recipient">Recipient:</label>
+            <select name="recipient" id="recipient" required>
+                <% if (typeof rows !== 'undefined') { %>
+                    <% rows.forEach(user => { %>
+                        <% if (user.id !== signedInUser.id) { %>
+                        <option value="<%= user.id %>"><%= user.fullName %></option>
+                        <% } %> 
+                    <% }); %>
+            <% } %>
+            </select>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label for="subject">Subject:</label>
+            <input type="text" name="subject" id="subject">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="body">Body:</label>
+            <textarea name="body" id="body"></textarea>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="attachment">Attachment:</label>
+            <input type="file" name="attachment" id="attachment">
+        </div>
+
+        <div style="margin-bottom: 20px;" class="sendButton">
+            <button type="submit">Send</button>
+        </div>
+        <% if (typeof message !== 'undefined') { %>
+            <p style="color: green"><%= message %></p>
+        <% } %>
+    </form>
+</div>
+  
